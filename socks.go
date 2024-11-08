@@ -120,8 +120,8 @@ func (c *Conn) BoundAddr() net.Addr {
 // A SocksDialer holds SOCKS-specific options.
 type SocksDialer struct {
 	cmd          Command // either CmdConnect or cmdBind
-	proxyNetwork string  // network between a proxy server and a client
-	proxyAddress string  // proxy server address
+	ProxyNetwork string  // network between a proxy server and a client
+	ProxyAddress string  // proxy server address
 
 	// ProxyDial specifies the optional dial function for
 	// establishing the transport connection.
@@ -160,10 +160,10 @@ func (d *SocksDialer) DialContext(ctx context.Context, network, address string) 
 	var err error
 	var c net.Conn
 	if d.ProxyDial != nil {
-		c, err = d.ProxyDial(ctx, d.proxyNetwork, d.proxyAddress)
+		c, err = d.ProxyDial(ctx, d.ProxyNetwork, d.ProxyAddress)
 	} else {
 		var dd net.Dialer
-		c, err = dd.DialContext(ctx, d.proxyNetwork, d.proxyAddress)
+		c, err = dd.DialContext(ctx, d.ProxyNetwork, d.ProxyAddress)
 	}
 	if err != nil {
 		proxy, dst, _ := d.pathAddrs(address)
@@ -215,9 +215,9 @@ func (d *SocksDialer) Dial(network, address string) (net.Conn, error) {
 	var err error
 	var c net.Conn
 	if d.ProxyDial != nil {
-		c, err = d.ProxyDial(context.Background(), d.proxyNetwork, d.proxyAddress)
+		c, err = d.ProxyDial(context.Background(), d.ProxyNetwork, d.ProxyAddress)
 	} else {
-		c, err = net.Dial(d.proxyNetwork, d.proxyAddress)
+		c, err = net.Dial(d.ProxyNetwork, d.ProxyAddress)
 	}
 	if err != nil {
 		proxy, dst, _ := d.pathAddrs(address)
@@ -245,7 +245,7 @@ func (d *SocksDialer) validateTarget(network string) error {
 }
 
 func (d *SocksDialer) pathAddrs(address string) (proxy, dst net.Addr, err error) {
-	for i, s := range []string{d.proxyAddress, address} {
+	for i, s := range []string{d.ProxyAddress, address} {
 		host, port, err := splitHostPort(s)
 		if err != nil {
 			return nil, nil, err
@@ -267,7 +267,7 @@ func (d *SocksDialer) pathAddrs(address string) (proxy, dst net.Addr, err error)
 // NewSocksDialer returns a new Dialer that dials through the provided
 // proxy server's network and address.
 func NewSocksDialer(network, address string) *SocksDialer {
-	return &SocksDialer{proxyNetwork: network, proxyAddress: address, cmd: CmdConnect}
+	return &SocksDialer{ProxyNetwork: network, ProxyAddress: address, cmd: CmdConnect}
 }
 
 const (

@@ -78,7 +78,7 @@ func RegisterDialerType(scheme string, f func(*url.URL, Dialer) (Dialer, error))
 
 // FromURL returns a Dialer given a URL specification and an underlying
 // Dialer for it to make network requests.
-func FromURL(u *url.URL, forward Dialer) (Dialer, error) {
+func FromURL(u *url.URL, forward Dialer) (*SocksDialer, error) {
 	var auth *Auth
 	if u.User != nil {
 		auth = new(Auth)
@@ -96,14 +96,6 @@ func FromURL(u *url.URL, forward Dialer) (Dialer, error) {
 			port = "1080"
 		}
 		return SOCKS5("tcp", net.JoinHostPort(addr, port), auth, forward)
-	}
-
-	// If the scheme doesn't match any of the built-in schemes, see if it
-	// was registered by another package.
-	if proxySchemes != nil {
-		if f, ok := proxySchemes[u.Scheme]; ok {
-			return f(u, forward)
-		}
 	}
 
 	return nil, errors.New("proxy: unknown scheme: " + u.Scheme)

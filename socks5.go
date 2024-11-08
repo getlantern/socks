@@ -12,7 +12,7 @@ import (
 // SOCKS5 returns a Dialer that makes SOCKSv5 connections to the given
 // address with an optional username and password.
 // See RFC 1928 and RFC 1929.
-func SOCKS5(network, address string, auth *Auth, forward Dialer) (Dialer, error) {
+func SOCKS5(network, address string, auth *Auth, forward Dialer) (*SocksDialer, error) {
 	d := NewSocksDialer(network, address)
 	if forward != nil {
 		if f, ok := forward.(ContextDialer); ok {
